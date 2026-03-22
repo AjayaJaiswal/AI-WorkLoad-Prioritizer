@@ -1,6 +1,7 @@
 def load_css():
     return """
     <style>
+    /* ---------- App Background & Layout ---------- */
     .stApp {
         background: #0B1220;
     }
@@ -11,6 +12,7 @@ def load_css():
         max-width: 1200px;
     }
 
+    /* ---------- Titles ---------- */
     .main-title {
         font-size: 2.4rem;
         font-weight: 800;
@@ -33,6 +35,7 @@ def load_css():
         margin-bottom: 0.9rem;
     }
 
+    /* ---------- Card UI ---------- */
     .card {
         background: linear-gradient(180deg, #172033 0%, #131C2B 100%);
         padding: 20px;
@@ -55,39 +58,40 @@ def load_css():
         line-height: 1.7;
     }
 
-    /* -------- AI boxes (minimal, sharp, clean) -------- */
-.ai-card {
-    background: #121A2B;
-    padding: 10px 12px;
-    border-radius: 2px;          /* almost sharp */
-    border: 1px solid #2A3954;
-    color: #E5EDF8;
-    margin-bottom: 0.4rem;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    box-shadow: none;            /* remove glow */
-}
+    /* ---------- AI Output Styling ---------- */
+    .ai-card {
+        background: #121A2B;
+        padding: 10px 12px;
+        border-radius: 2px;
+        border: 1px solid #2A3954;
+        color: #E5EDF8;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        box-shadow: none;
+    }
 
-.ai-card-recommended {
-    background: #13281F;
-    padding: 10px 12px;
-    border-radius: 2px;
-    border: 1px solid #2F5E46;
-    color: #EAF8F0;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    line-height: 1.5;
-    box-shadow: none;
-}
+    .ai-card-recommended {
+        background: #13281F;
+        padding: 10px 12px;
+        border-radius: 2px;
+        border: 1px solid #2F5E46;
+        color: #EAF8F0;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        line-height: 1.5;
+        box-shadow: none;
+    }
 
+    /* ---------- Divider ---------- */
     hr {
         border: none;
         border-top: 1px solid #223048;
         margin: 1.6rem 0;
     }
 
-    /* Inputs */
+    /* ---------- Input Fields ---------- */
     div[data-baseweb="input"] > div,
     div[data-baseweb="select"] > div,
     div[data-baseweb="base-input"] > div {
@@ -100,59 +104,47 @@ def load_css():
         color: #F8FAFC !important;
     }
 
-    /* Number input / slider labels */
+    /* Labels */
     label, .stSlider label {
         color: #CBD5E1 !important;
         font-weight: 500;
     }
 
-    /* Buttons - softer aesthetic */
-.stButton > button, .stFormSubmitButton > button {
-    width: 100%;
-    background: #1E293B;   /* muted dark blue */
-    color: #E2E8F0;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 0.55rem 1rem;
-    font-weight: 600;
-    box-shadow: none;
-    transition: all 0.18s ease;
-}
-
-/* Hover - subtle, not flashy */
-.stButton > button:hover, .stFormSubmitButton > button:hover {
-    background: #243244;
-    border-color: #3B4A63;
-    transform: translateY(-1px);
-}
-
-/* Active */
-.stButton > button:active, .stFormSubmitButton > button:active {
-    transform: translateY(0px);
-}
-
-/* Primary (AI button only) */
-div.stButton:nth-of-type(3) > button {
-    background: #334155;
-    border-color: #475569;
-}
-
-/* Primary hover */
-div.stButton:nth-of-type(3) > button:hover {
-    background: #3B4A63;
-}
-
-    .stButton > button:hover, .stFormSubmitButton > button:hover {
-        transform: translateY(-1px);
-        background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 100%);
-        border-color: #4F75E6;
+    /* ---------- Buttons ---------- */
+    .stButton > button, .stFormSubmitButton > button {
+        width: 100%;
+        background: #1E293B;
+        color: #E2E8F0;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 0.55rem 1rem;
+        font-weight: 600;
+        transition: all 0.18s ease;
     }
 
+    /* Hover effect */
+    .stButton > button:hover, .stFormSubmitButton > button:hover {
+        background: #243244;
+        border-color: #3B4A63;
+        transform: translateY(-1px);
+    }
+
+    /* Active click */
     .stButton > button:active, .stFormSubmitButton > button:active {
         transform: translateY(0px);
     }
 
-    /* Dataframe container */
+    /* Primary (AI button highlight) */
+    div.stButton:nth-of-type(3) > button {
+        background: #334155;
+        border-color: #475569;
+    }
+
+    div.stButton:nth-of-type(3) > button:hover {
+        background: #3B4A63;
+    }
+
+    /* ---------- Data Table ---------- */
     div[data-testid="stDataFrame"] {
         border: 1px solid #263247;
         border-radius: 14px;
@@ -160,7 +152,7 @@ div.stButton:nth-of-type(3) > button:hover {
         box-shadow: 0 8px 20px rgba(0,0,0,0.18);
     }
 
-    /* Info / success / warning boxes */
+    /* ---------- Alerts ---------- */
     div[data-testid="stAlert"] {
         border-radius: 14px;
     }

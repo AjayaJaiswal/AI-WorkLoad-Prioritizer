@@ -1,39 +1,42 @@
 import streamlit as st
 import pandas as pd
 
+# --- Core logic imports ---
 from ai_prioritizer import prioritize_tasks_with_ai
 from scoring import calculate_score, calculate_risk, get_recommendation, get_reason
 from styles import load_css
 
+# --- App setup ---
 st.set_page_config(page_title="AI Workload Predictor", layout="wide")
 
 st.markdown(load_css(), unsafe_allow_html=True)
 
-# ---------- Header ----------
+# ---------- Header UI ----------
 st.markdown('<div class="main-title">WorkLoad Prioritizer</div>', unsafe_allow_html=True)
 st.markdown(
     '<div class="sub-text">AI helps students decide what to work on first.</div>',
     unsafe_allow_html=True
 )
 
-# ---------- Session State ----------
+# ---------- Session State (persistent data) ----------
 if "tasks" not in st.session_state:
-    st.session_state.tasks = []
+    st.session_state.tasks = []  # store user tasks
 
 if "ai_result" not in st.session_state:
-    st.session_state.ai_result = ""
+    st.session_state.ai_result = ""  # store AI output
 
 if "demo_loaded" not in st.session_state:
-    st.session_state.demo_loaded = False
+    st.session_state.demo_loaded = False  # track demo usage
 
 st.markdown("---")
 
-# ---------- Add Task ----------
+# ---------- Add Task Form ----------
 st.markdown('<div class="section-title">➕ Add Task</div>', unsafe_allow_html=True)
 
 with st.form("task_form", clear_on_submit=True):
     col1, col2 = st.columns(2)
 
+    # --- Input fields ---
     with col1:
         name = st.text_input("Task Name")
         deadline = st.number_input("Deadline (days)", min_value=0, step=1)
@@ -45,12 +48,15 @@ with st.form("task_form", clear_on_submit=True):
 
     submitted = st.form_submit_button("➕ Add Task")
 
+    # --- Handle form submission ---
     if submitted:
         if name.strip():
+            # clear demo data if user starts adding real tasks
             if st.session_state.demo_loaded:
                 st.session_state.tasks = []
                 st.session_state.demo_loaded = False
 
+            # store task
             st.session_state.tasks.append({
                 "name": name.strip(),
                 "deadline": int(deadline),
@@ -59,14 +65,15 @@ with st.form("task_form", clear_on_submit=True):
                 "weight": int(weight),
             })
 
-            st.session_state.ai_result = ""
+            st.session_state.ai_result = ""  # reset AI output
             st.success("Task added.")
         else:
             st.warning("Please enter a task name.")
 
-# ---------- Buttons ----------
+# ---------- Control Buttons ----------
 col1, col2 = st.columns(2)
 
+# --- Reset all data ---
 with col1:
     if st.button("🗑 Reset", use_container_width=True):
         st.session_state.tasks = []
@@ -74,6 +81,7 @@ with col1:
         st.session_state.demo_loaded = False
         st.success("Tasks cleared.")
 
+# --- Load demo data ---
 with col2:
     if st.button("📂 Demo", use_container_width=True):
         st.session_state.tasks = [
@@ -89,11 +97,12 @@ with col2:
 
 st.markdown("")
 
-# ---------- Hidden backend scoring ----------
+# ---------- Backend Scoring ----------
+# compute score for each task before AI processing
 for task in st.session_state.tasks:
     task["score"] = calculate_score(task)
 
-# ---------- AI Button ----------
+# ---------- AI Trigger ----------
 if st.button("🤖 Prioritize with AI", use_container_width=True):
     if st.session_state.tasks:
         with st.spinner("Analyzing..."):
@@ -101,7 +110,7 @@ if st.button("🤖 Prioritize with AI", use_container_width=True):
     else:
         st.warning("Add tasks first.")
 
-# ---------- AI Output ----------
+# ---------- AI Output Display ----------
 st.markdown("---")
 st.markdown('<div class="section-title">🧠 AI Prioritization</div>', unsafe_allow_html=True)
 
@@ -111,6 +120,7 @@ if st.session_state.ai_result:
     summary = None
     ranking_lines = []
 
+    # --- separate summary and ranked results ---
     for line in lines:
         clean_line = line.strip()
         if not clean_line:
@@ -121,7 +131,7 @@ if st.session_state.ai_result:
         else:
             ranking_lines.append(clean_line)
 
-    # Show reasoning summary first
+    # --- show summary ---
     if summary:
         st.markdown('<div class="section-title">🔍 AI Reasoning Summary</div>', unsafe_allow_html=True)
         st.markdown(
@@ -129,7 +139,7 @@ if st.session_state.ai_result:
             unsafe_allow_html=True
         )
 
-    # Show ranked output
+    # --- show ranked tasks ---
     for line in ranking_lines:
         if "Recommended first task" in line:
             st.markdown(
@@ -144,12 +154,13 @@ if st.session_state.ai_result:
 else:
     st.info("Click 'Prioritize with AI' to generate the ranked task order.")
 
-# ---------- Task List ----------
+# ---------- Task List + Analysis ----------
 st.markdown("---")
 st.markdown('<div class="section-title">📝 Task List</div>', unsafe_allow_html=True)
 
 results = []
 
+# --- compute risk + recommendation for each task ---
 for i, task in enumerate(st.session_state.tasks, start=1):
     risk = calculate_risk(task)
     action = get_recommendation(risk)
@@ -167,10 +178,11 @@ for i, task in enumerate(st.session_state.tasks, start=1):
         "Reason": reason
     })
 
-# ---------- Table ----------
+# ---------- Table Display ----------
 if results:
     df = pd.DataFrame(results)
 
+    # --- highlight rows based on risk ---
     def highlight_risk(row):
         if row["Risk"] == "HIGH":
             return ["background-color: #3A2323; color: #FCA5A5"] * len(row)
